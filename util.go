@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"log"
 	"mime"
 	"os"
 	"path/filepath"
@@ -86,7 +87,7 @@ func InlineImages(inHTML, imageURLPrefix, imageUploadPath string) (outHTML strin
 					str, err = MigrateDiskImageToBase64(filepath.Join(imageUploadPath, filepath.Base(imageSource)))
 
 					if err != nil {
-						return
+						log.Printf("Unable to inline image: %s, error: %s", imageSource, err)
 					} else {
 						n.Attr[attrIndex].Val = str
 						numSuccessful++
@@ -111,6 +112,8 @@ func DeInlineImages(inHTML, imageURLPrefix, imageUploadPath string) (outHTML str
 					if err == nil {
 						n.Attr[attrIndex].Val = fmt.Sprintf("%s/%s", imageURLPrefix, filename)
 						numSuccessful++
+					} else {
+						log.Printf("Unable to de-inline image, error: %s", err)
 					}
 				}
 			}
