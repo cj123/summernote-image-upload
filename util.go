@@ -76,7 +76,7 @@ func MigrateDiskImageToBase64(path string) (string, error) {
 
 // InlineImages takes inHTML and looks at all <img> tags, replacing their src attributes with a base64 encoded variant.
 func InlineImages(inHTML, imageURLPrefix, imageUploadPath string) (outHTML string, numSuccessful int, err error) {
-	return processImagesInHTML(inHTML, func(n *html.Node) {
+	outHTML, err = processImagesInHTML(inHTML, func(n *html.Node) {
 		for attrIndex := range n.Attr {
 			if n.Attr[attrIndex].Key == "src" {
 				imageSource := n.Attr[attrIndex].Val
@@ -96,12 +96,14 @@ func InlineImages(inHTML, imageURLPrefix, imageUploadPath string) (outHTML strin
 			}
 		}
 	})
+
+	return outHTML, numSuccessful, err
 }
 
 // DeInlineImages takes inHTML and looks at all <img> tags, reading all base64 inlined images and writing them to disk,
 // replacing the source attributes in the process.
 func DeInlineImages(inHTML, imageURLPrefix, imageUploadPath string) (outHTML string, numSuccessful int, err error) {
-	return processImagesInHTML(inHTML, func(n *html.Node) {
+	outHTML, err = processImagesInHTML(inHTML, func(n *html.Node) {
 		for attrIndex := range n.Attr {
 			if n.Attr[attrIndex].Key == "src" {
 				imageSource := n.Attr[attrIndex].Val
@@ -119,26 +121,26 @@ func DeInlineImages(inHTML, imageURLPrefix, imageUploadPath string) (outHTML str
 			}
 		}
 	})
+
+	return outHTML, numSuccessful, err
 }
 
-func processImagesInHTML(inHTML string, processFunc func(n *html.Node)) (outHTML string, numSuccessful int, err error) {
+func processImagesInHTML(inHTML string, processFunc func(n *html.Node)) (outHTML string, err error) {
 	n, err := html.Parse(strings.NewReader(inHTML))
 
 	if err != nil {
-		return outHTML, numSuccessful, err
+		return outHTML, err
 	}
 
 	recurseImagesInHTML(n, processFunc)
 
-	if numSuccessful > 0 {
-		buf := new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
-		if err := html.Render(buf, n); err != nil {
-			return outHTML, numSuccessful, err
-		}
-
-		outHTML = buf.String()
+	if err := html.Render(buf, n); err != nil {
+		return outHTML, err
 	}
 
-	return outHTML, numSuccessful, nil
+	outHTML = buf.String()
+
+	return outHTML, nil
 }
