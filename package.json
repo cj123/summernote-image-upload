@@ -1,0 +1,31 @@
+{
+  "name": "summernote-image-upload",
+  "version": "1.0.0",
+  "description": "a utility for uploading summernote images to disk",
+  "main": "SummerNoteImageUploader.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cj123/summernote-image-upload.git"
+  },
+  "keywords": [
+    "summernote",
+    "image",
+    "upload",
+    "golang"
+  ],
+  "author": "Callum Jones <cj@icj.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cj123/summernote-image-upload/issues"
+  },
+  "homepage": "https://github.com/cj123/summernote-image-upload#readme",
+  "dependencies": {
+    "@types/jquery": "^3.5.5",
+    "@types/summernote": "^0.8.4",
+    "jquery": "^3.6.0",
+    "summernote": "^0.8.18"
+  }
+}
