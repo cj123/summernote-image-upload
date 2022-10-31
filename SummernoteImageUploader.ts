@@ -3,12 +3,14 @@ export class SummernoteImageUploader {
     private readonly uploadURL: string;
     private readonly opts: Summernote.Options;
     private readonly code?: string;
+    private readonly formdataCallback?: (data: FormData) => void;
 
-    public constructor(uploadURL: string, $element: JQuery, opts: Summernote.Options, code?: string) {
+    public constructor(uploadURL: string, $element: JQuery, opts: Summernote.Options, code?: string, formDataCallback?: (data: FormData) => void) {
         this.uploadURL = uploadURL;
         this.$element = $element;
         this.opts = opts;
         this.code = code;
+        this.formdataCallback = formDataCallback;
     }
 
     public render(): void {
@@ -31,6 +33,10 @@ export class SummernoteImageUploader {
     private uploadFile(file: File) {
         let data = new FormData();
         data.append("image", file);
+
+        if (this.formdataCallback) {
+            this.formdataCallback(data);
+        }
 
         $.ajax({
             url: this.uploadURL,
